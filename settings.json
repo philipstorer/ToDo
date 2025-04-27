@@ -1,0 +1,20 @@
+{
+  "buckets": [
+    "Mindset",
+    "Health",
+    "Family",
+    "Learning",
+    "Career",
+    "Finance",
+    "Creativity",
+    "Community",
+    "Adventure",
+    "Spirituality"
+  ],
+  "recurring_tasks": [
+    {"task": "Exercise", "bucket": "Health"},
+    {"task": "Meditate", "bucket": "Mindset"},
+    {"task": "Call Parents", "bucket": "Family"},
+    {"task": "Read 10 pages", "bucket": "Learning"}
+  ]
+}
