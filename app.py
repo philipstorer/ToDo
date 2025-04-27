@@ -92,7 +92,7 @@ with st.expander("Add New Task", expanded=False):
         if new_task.strip() != "":
             tasks.append({"task": new_task.strip(), "bucket": bucket_choice, "completed": False})
             save_tasks(tasks)
-            st.experimental_rerun()
+            st.rerun()
 
 st.divider()
 
@@ -110,10 +110,10 @@ for idx, bucket in enumerate(BUCKETS):
             with col1:
                 if st.button("↑", key=f"up-{bucket}-{i}"):
                     move_task(tasks, bucket, i, "up")
-                    st.experimental_rerun()
+                    st.rerun()
                 if st.button("↓", key=f"down-{bucket}-{i}"):
                     move_task(tasks, bucket, i, "down")
-                    st.experimental_rerun()
+                    st.rerun()
 
             with col2:
                 task_done = st.checkbox(task["task"], value=task["completed"], key=f"{bucket}-{i}")
@@ -172,35 +172,4 @@ if all_tasks:
     option = st.selectbox("View progress by:", ["Day", "Week", "Month", "Year"])
 
     if option == "Day":
-        trend = history_df.groupby(["date", "bucket"])["completed"].mean().reset_index()
-        trend["completed"] *= 100
-        for bucket in BUCKETS:
-            bucket_data = trend[trend["bucket"] == bucket]
-            if not bucket_data.empty:
-                st.line_chart(bucket_data.set_index("date")["completed"], height=200)
-    elif option == "Week":
-        history_df["week"] = history_df["date"].dt.to_period('W').apply(lambda r: r.start_time)
-        trend = history_df.groupby(["week", "bucket"])["completed"].mean().reset_index()
-        trend["completed"] *= 100
-        for bucket in BUCKETS:
-            bucket_data = trend[trend["bucket"] == bucket]
-            if not bucket_data.empty:
-                st.line_chart(bucket_data.set_index("week")["completed"], height=200)
-    elif option == "Month":
-        history_df["month"] = history_df["date"].dt.to_period('M').apply(lambda r: r.start_time)
-        trend = history_df.groupby(["month", "bucket"])["completed"].mean().reset_index()
-        trend["completed"] *= 100
-        for bucket in BUCKETS:
-            bucket_data = trend[trend["bucket"] == bucket]
-            if not bucket_data.empty:
-                st.line_chart(bucket_data.set_index("month")["completed"], height=200)
-    elif option == "Year":
-        history_df["year"] = history_df["date"].dt.year
-        trend = history_df.groupby(["year", "bucket"])["completed"].mean().reset_index()
-        trend["completed"] *= 100
-        for bucket in BUCKETS:
-            bucket_data = trend[trend["bucket"] == bucket]
-            if not bucket_data.empty:
-                st.line_chart(bucket_data.set_index("year")["completed"], height=200)
-else:
-    st.write("Not enough historical data yet.")
+        trend = history_df.groupby(["date", "bucket"])["_
