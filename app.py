@@ -30,7 +30,6 @@ def load_tasks():
         with open(today_file, "r") as f:
             return json.load(f)
     else:
-        # Create today's file
         yesterday = (date.today() - timedelta(days=1)).isoformat()
         yesterday_file = f"tasks/{yesterday}.json"
         tasks = []
@@ -172,4 +171,35 @@ if all_tasks:
     option = st.selectbox("View progress by:", ["Day", "Week", "Month", "Year"])
 
     if option == "Day":
-        trend = history_df.groupby(["date", "bucket"])["_
+        trend = history_df.groupby(["date", "bucket"])["completed"].mean().reset_index()
+        trend["completed"] *= 100
+        for bucket in BUCKETS:
+            bucket_data = trend[trend["bucket"] == bucket]
+            if not bucket_data.empty:
+                st.line_chart(bucket_data.set_index("date")["completed"], height=200)
+    elif option == "Week":
+        history_df["week"] = history_df["date"].dt.to_period('W').apply(lambda r: r.start_time)
+        trend = history_df.groupby(["week", "bucket"])["completed"].mean().reset_index()
+        trend["completed"] *= 100
+        for bucket in BUCKETS:
+            bucket_data = trend[trend["bucket"] == bucket]
+            if not bucket_data.empty:
+                st.line_chart(bucket_data.set_index("week")["completed"], height=200)
+    elif option == "Month":
+        history_df["month"] = history_df["date"].dt.to_period('M').apply(lambda r: r.start_time)
+        trend = history_df.groupby(["month", "bucket"])["completed"].mean().reset_index()
+        trend["completed"] *= 100
+        for bucket in BUCKETS:
+            bucket_data = trend[trend["bucket"] == bucket]
+            if not bucket_data.empty:
+                st.line_chart(bucket_data.set_index("month")["completed"], height=200)
+    elif option == "Year":
+        history_df["year"] = history_df["date"].dt.year
+        trend = history_df.groupby(["year", "bucket"])["completed"].mean().reset_index()
+        trend["completed"] *= 100
+        for bucket in BUCKETS:
+            bucket_data = trend[trend["bucket"] == bucket]
+            if not bucket_data.empty:
+                st.line_chart(bucket_data.set_index("year")["completed"], height=200)
+else:
+    st.write("Not enough historical data yet.")
