@@ -86,11 +86,33 @@ st.markdown("---")
 
 # --- Show Buckets
 cols = st.columns(5)
-half = len(BUCKETS) // 2
 
 for idx, bucket in enumerate(BUCKETS):
     with cols[idx % 5]:
         st.subheader(bucket)
         for i, task in enumerate(tasks):
             if task["bucket"] == bucket:
-                task_done = st.checkbox(task["task"], value=task["completed"], key=f"{bucket_
+                task_done = st.checkbox(task["task"], value=task["completed"], key=f"{bucket}-{i}")
+                tasks[i]["completed"] = task_done
+
+save_tasks(tasks)
+
+# --- Holding Tank
+with st.expander("🔄 Holding Tank (Unfinished tasks from before)"):
+    for i, task in enumerate(tasks):
+        if task["bucket"] == "Holding Tank":
+            task_done = st.checkbox(task["task"], value=task["completed"], key=f"holding-{i}")
+            tasks[i]["completed"] = task_done
+
+save_tasks(tasks)
+
+# --- Dashboard
+st.markdown("---")
+st.header("📈 Daily Progress")
+
+df = pd.DataFrame(tasks)
+if not df.empty:
+    progress = df.groupby("bucket")["completed"].mean().fillna(0) * 100
+    st.bar_chart(progress)
+else:
+    st.write("No tasks yet today.")
